@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Visualization Mini-Project</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for ('static', filename='style.css') }}">
+</head>
+<body>
+<center>
+    <h1>COVID-19 Pandemic Analysis</h1>
+    <br><br>
+    <h2>We have used sampling here to find different kinds of plots as we previously done in Lab 2.</h2>
+    <hr>
+    <br><br>
+    <h5>Due to high number of records the scatter plots generated are slow hence we have saved the csv file of fitted data for MDS correlation and MDS Euclidian and then loaded it. The CSV files have been attached.</h5>
+</center>
+<hr>
+ <div class="row" >
+     <div class="butt">
+      <BUTTON align="center"><a href="./">Home</a></BUTTON>
+     </div>
+     <div class="buttdown">
+      <BUTTON align="center"><a href="./pca_scree_stratified">PCA_SCREE with stratified data</a></BUTTON>
+      <BUTTON align="center"><a href="./mds_corr_stratified">MDS Correlation with stratified data</a></BUTTON>
+      <BUTTON align="center"><a href="./mds_euc_stratified">MDS Euclidian with stratified data</a></BUTTON>
+      <BUTTON align="center"><a href="./scatter_stratified">Scatter plot for PC1 and PC2 with stratified data</a></BUTTON>
+      </div>
+      <BUTTON align="center"><a href="http://127.0.0.1/project/index.html">Back to Dashboard</a></BUTTON>
+ </div>
+ <div id="vis">
+ </div>
+<body style="background-color:silver;text-align:center">
+<div id = "error"></div>
+<script src="https://d3js.org/d3.v5.js"></script>
+<!-- <script>
+
+function convert_arr(arr_data) {
+    arr_data = arr_data.slice(1, -1);
+    nums_arr = arr_data.split(",");
+
+    return nums_arr.map(x => Number(x));}
+
+  var scree_data = convert_arr('{{scree}}');
+  var cum_sum = convert_arr('{{scree_cum}}');
+
+  var barPadding = 5;
+
+    // set the dimensions and margins of the graph
+var margin = {top: 20, right: 20, bottom: 40, left: 60},
+    width = 600 - margin.left - margin.right,
+    height = 600 - margin.top - margin.bottom;
+
+// create svg element, respecting margins
+var svg = d3.select("#vis")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+// Add X axis
+var x = d3.scaleLinear().domain([0, 11]).range([0, width]);
+svg
+  .append("g")
+  .attr("class", "x axis")
+  .attr("transform", "translate(0," + height + ")")
+  .call(d3.axisBottom(x));
+
+// Add Y axis
+var y = d3.scaleLinear().domain([0, d3.max(cum_sum)]).rangeRound([height, 0]);
+
+svg
+  .append("g")
+  .attr("class", "y axis")
+  .call(d3.axisLeft(y));
+
+// Add X axis label:
+svg.append("text")
+    .attr("text-anchor", "end")
+    .attr("x", width / 2 + margin.left)
+    .attr("y", height + margin.top + 15)
+    .text("Components");
+
+// Y axis label:
+svg.append("text")
+    .attr("text-anchor", "end")
+    .attr("transform", "rotate(-90)")
+    .attr("x", -height / 2 + margin.top + margin.bottom)
+    .attr("y", -margin.left+20)
+    .text("Explained Variance")
+
+svg.selectAll("rect")
+        .data(scree_data)
+        .enter()
+        .append("rect")
+        .attr("x", function(d, i) {return 20 + x(i)})
+        .attr("y", function(d) {return y(d)})
+        .attr("width", width / scree_data.length - barPadding)
+        .attr("height", function(d) {return height - y(d)})
+        .attr("fill", "steelblue");
+
+var lineEnd = 300
+
+svg.append("path")
+      .datum(cum_sum)
+      .attr("fill", "none")
+      .attr("stroke", "red")
+      .attr("stroke-width", 1.5)
+      .attr("d", d3.line()
+      .x(function(d, i) {return x(i + 1)})
+      .y(function(d) {return y(d)}))
+
+
+
+svg.selectAll(".dot")
+    .data(cum_sum)
+  .enter().append("circle") 
+    .attr("class", "dot")
+    .attr("fill", "red") 
+    .attr("cx", function(d, i) { return x(i + 1) })
+    .attr("cy", function(d) {return y(d)})
+    .attr("r", 2)
+
+
+svg.append("line")
+      .attr("x1", x(3))
+      .attr("x2", x(3))
+      .attr("y1", 0)
+      .attr("y2", height)
+      .attr("stroke-width", 1.5)
+      .attr("stroke", "green")
+
+
+  svg.append("circle").attr("cx", 230).attr("cy", 100).attr("r", 5).style("fill", "red")
+  svg.append("text")
+  .attr("x", 240)
+  .attr("y", 100)
+  .text("Cumulative Explained Variance")
+  .style("font-size", "15px")
+  .attr("alignment-baseline","middle")
+</script> -->
+<!-- <script>
+function convert_arr(arr_data) {
+    arr_data = arr_data.slice(1, -1);
+    nums_arr = arr_data.split(",");
+
+    return nums_arr.map(x => Number(x));}
+
+  var pc1 = convert_arr('{{pc1}}');
+  var pc2 = convert_arr('{{pc2}}');
+
+  var data = new Array();
+
+  for (i = 0; i < pc1.length; i++) {
+     data = data.concat({'pc1':pc1[i], 'pc2':pc2[i]})
+  }
+
+  var barPadding = 5;
+
+    // set the dimensions and margins of the graph
+var margin = {top: 20, right: 20, bottom: 40, left: 60},
+    width = 600 - margin.left - margin.right,
+    height = 600 - margin.top - margin.bottom;
+
+// create svg element, respecting margins
+var svg = d3.select("#vis")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+// Add X axis
+var x = d3.scaleLinear().domain([d3.min(pc1), d3.max(pc1)]).range([0, width]);
+svg
+  .append("g")
+  .attr("class", "x axis")
+  .attr("transform", "translate(0," + height + ")")
+  .call(d3.axisBottom(x));
+
+// Add Y axis
+var y = d3.scaleLinear().domain([d3.min(pc2), d3.max(pc2)]).rangeRound([height, 0]);
+
+svg
+  .append("g")
+  .attr("class", "y axis")
+  .call(d3.axisLeft(y));
+
+// Add X axis label:
+svg.append("text")
+    .attr("text-anchor", "end")
+    .attr("x", width / 2 + margin.left)
+    .attr("y", height + margin.top + 15)
+    .text("PC1");
+
+// Y axis label:
+svg.append("text")
+    .attr("text-anchor", "end")
+    .attr("transform", "rotate(-90)")
+    .attr("x", -height / 2 + margin.top + margin.bottom)
+    .attr("y", -margin.left+20)
+    .text("PC2")
+
+svg.append('g')
+    .selectAll("dot")
+    .data(data)
+    .enter()
+    .append("circle")
+      .attr("cx", function (d) { return x(d.pc1); } )
+      .attr("cy", function (d) { return y(d.pc2); } )
+      .attr("r", 2)
+      .style("fill", "steelblue")
+</script> -->
+<!-- <script>
+function convert_arr(arr_data) {
+    arr_data = arr_data.slice(1, -1);
+    nums_arr = arr_data.split(",");
+
+    return nums_arr.map(x => Number(x));}
+  
+  var mds_correlation1 = convert_arr('{{mds_correlation1}}');
+  var mds_correlation2 = convert_arr('{{mds_correlation2}}');
+
+var data = new Array();
+
+  for (i = 0; i < mds_correlation1.length; i++) {
+     data = data.concat({'mds_correlation1':mds_correlation1[i], 'mds_correlation2':mds_correlation2[i]})
+  }
+
+  var barPadding = 5;
+
+    // set the dimensions and margins of the graph
+var margin = {top: 20, right: 20, bottom: 40, left: 60},
+    width = 600 - margin.left - margin.right,
+    height = 600 - margin.top - margin.bottom;
+
+// create svg element, respecting margins
+var svg = d3.select("#vis")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+// Add X axis
+var x = d3.scaleLinear().domain([d3.min(mds_correlation1), d3.max(mds_correlation1)]).range([0, width]);
+svg
+  .append("g")
+  .attr("class", "x axis")
+  .attr("transform", "translate(0," + height + ")")
+  .call(d3.axisBottom(x));
+
+// Add Y axis
+var y = d3.scaleLinear().domain([d3.min(mds_correlation2), d3.max(mds_correlation2)]).rangeRound([height, 0]);
+
+svg
+  .append("g")
+  .attr("class", "y axis")
+  .call(d3.axisLeft(y));
+
+// Add X axis label:
+svg.append("text")
+    .attr("text-anchor", "end")
+    .attr("x", width / 2 + margin.left)
+    .attr("y", height + margin.top + 15)
+    .text("PC1");
+
+// Y axis label:
+svg.append("text")
+    .attr("text-anchor", "end")
+    .attr("transform", "rotate(-90)")
+    .attr("x", -height / 2 + margin.top + margin.bottom)
+    .attr("y", -margin.left+20)
+    .text("PC2")
+
+svg.append('g')
+    .selectAll("dot")
+    .data(data)
+    .enter()
+    .append("circle")
+      .attr("cx", function (d) { return x(d.mds_correlation1); } )
+      .attr("cy", function (d) { return y(d.mds_correlation2); } )
+      .attr("r", 2)
+      .style("fill", "steelblue")
+</script> -->
+<!-- <script>
+  function convert_arr(arr_data) {
+    arr_data = arr_data.slice(1, -1);
+    nums_arr = arr_data.split(",");
+
+    return nums_arr.map(x => Number(x));}
+  var mds_euclidean1 = convert_arr('{{mds_euclidean1}}');
+  var mds_euclidean2 = convert_arr('{{mds_euclidean2}}');
+
+var data = new Array();
+
+  for (i = 0; i < mds_euclidean1.length; i++) {
+     data = data.concat({'mds_euclidean1':mds_euclidean1[i], 'mds_euclidean2':mds_euclidean2[i]})
+  }
+
+  var barPadding = 5;
+
+    // set the dimensions and margins of the graph
+var margin = {top: 20, right: 20, bottom: 40, left: 60},
+    width = 600 - margin.left - margin.right,
+    height = 600 - margin.top - margin.bottom;
+
+// create svg element, respecting margins
+var svg = d3.select("#vis")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+// Add X axis
+var x = d3.scaleLinear().domain([d3.min(mds_euclidean1), d3.max(mds_euclidean1)]).range([0, width]);
+svg
+  .append("g")
+  .attr("class", "x axis")
+  .attr("transform", "translate(0," + height + ")")
+  .call(d3.axisBottom(x));
+
+// Add Y axis
+var y = d3.scaleLinear().domain([d3.min(mds_euclidean2), d3.max(mds_euclidean2)]).rangeRound([height, 0]);
+
+svg
+  .append("g")
+  .attr("class", "y axis")
+  .call(d3.axisLeft(y));
+
+// Add X axis label:
+svg.append("text")
+    .attr("text-anchor", "end")
+    .attr("x", width / 2 + margin.left)
+    .attr("y", height + margin.top + 15)
+    .text("MDS1");
+
+// Y axis label:
+svg.append("text")
+    .attr("text-anchor", "end")
+    .attr("transform", "rotate(-90)")
+    .attr("x", -height / 2 + margin.top + margin.bottom)
+    .attr("y", -margin.left+20)
+    .text("MDS2")
+
+svg.append('g')
+    .selectAll("dot")
+    .data(data)
+    .enter()
+    .append("circle")
+      .attr("cx", function (d) { return x(d.mds_euclidean1); } )
+      .attr("cy", function (d) { return y(d.mds_euclidean2); } )
+      .attr("r", 2)
+      .style("fill", "steelblue")
+</script> -->
+<script>
+
+var width = 960,
+    size = 230,
+    padding = 20;
+
+var x = d3.scaleLinear()
+    .range([padding / 2, size - padding / 2]);
+
+var y = d3.scaleLinear()
+    .range([size - padding / 2, padding / 2]);
+
+var xAxis = d3.axisBottom()
+    .scale(x)
+    .ticks(6);
+
+var yAxis = d3.axisLeft()
+    .scale(y)
+    .ticks(6);
+
+var color = d3.scaleOrdinal(d3.schemeCategory10);
+
+d3.csv("{{ url_for('static', filename='StratPC.csv') }}")
+    .then(function(data) {
+        console.log(data)
+  //if (error) throw error;
+
+  var domainByTrait = {},
+      traits = d3.keys(data[0]).filter(function(d) { return d !== "species"; }),
+      n = traits.length;
+
+  traits.forEach(function(trait) {
+    domainByTrait[trait] = d3.extent(data, function(d) { return d[trait]; });
+  });
+
+  console.log('dmt', domainByTrait)
+  xAxis.tickSize(size * n);
+  yAxis.tickSize(-size * n);
+
+
+
+  var svg = d3.select("body").append("svg")
+      .attr("width", size * n + padding)
+      .attr("height", size * n + padding)
+    .append("g")
+      .attr("transform", "translate(" + padding + "," + padding / 2 + ")");
+
+  console.log(domainByTrait)
+    console.log(xAxis)
+  svg.selectAll(".x.axis")
+      .data(traits)
+    .enter().append("g")
+      .attr("class", "x axis")
+      .attr("transform", function(d, i) { return "translate(" + (n - i - 1) * size + ",0)"; })
+      .each(function(d) {
+          x.domain(domainByTrait[d]);
+          //console.log(this)
+          //d3.select(this).call(xAxis);
+      })
+      //.call(xAxis);
+
+  svg.selectAll(".y.axis")
+      .data(traits)
+    .enter().append("g")
+      .attr("class", "y axis")
+      .attr("transform", function(d, i) { return "translate(0," + i * size + ")"; })
+      .each(function(d) {
+          y.domain(domainByTrait[d]);
+          //d3.select(this).call(yAxis);
+      })
+      //.call(yAxis);
+
+  var cell = svg.selectAll(".cell")
+      .data(cross(traits, traits))
+    .enter().append("g")
+      .attr("class", "cell")
+      .attr("transform", function(d) { return "translate(" + (n - d.i - 1) * size + "," + d.j * size + ")"; })
+      .each(plot);
+
+  // Titles for the diagonal.
+  cell.filter(function(d) { return d.i === d.j; }).append("text")
+      .attr("x", padding)
+      .attr("y", padding)
+      .attr("dy", ".71em")
+      .text(function(d) { return d.x; });
+
+
+  function plot(p) {
+    var cell = d3.select(this);
+
+    x.domain(domainByTrait[p.x]);
+    y.domain(domainByTrait[p.y]);
+
+    cell.append("rect")
+        .attr("class", "frame")
+        .attr("x", padding / 2)
+        .attr("y", padding / 2)
+        .attr("width", size - padding)
+        .attr("height", size - padding);
+
+    cell.selectAll("circle")
+        .data(data)
+      .enter().append("circle")
+        .attr("cx", function(d) { return x(d[p.x]); })
+        .attr("cy", function(d) { return y(d[p.y]); })
+        .attr("r", 4)
+        .style("fill", function(d) { return color(d.species); });
+  }
+
+
+});
+
+function cross(a, b) {
+  var c = [], n = a.length, m = b.length, i, j;
+  for (i = -1; ++i < n;) for (j = -1; ++j < m;) c.push({x: a[i], i: i, y: b[j], j: j});
+  return c;
+}
+
+</script>
+<div id = "error"></div>
+<script src = "{{ url_for('static', filename='d3.min.js')}}"></script>
+<script src = "{{ url_for('static', filename='jquery.min.js')}}"></script>
+<script src = "{{ url_for('static', filename='bar.js')}}"></script>
+<style src = "{{ url_for('static', filename='style.css')}}"></style>
+</body>
+</html>

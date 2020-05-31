@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script type="text/javascript">
+window.onload = function () {
+	var chart = new CanvasJS.Chart("chartContainer",
+	{
+		title:{
+			text: "Situation of the hospitals at the time of data collection."
+		},
+		legend: {
+			maxWidth: 350,
+			itemWidth: 120
+		},
+		data: [
+		{
+			type: "pie",
+			showInLegend: true,
+			legendText: "{indexLabel}",
+			dataPoints: [
+				{ y: 2244390, indexLabel: "hospitalizedCurrently" },
+				{ y: 509515, indexLabel: "inIcuCurrently" },
+				{ y: 134616, indexLabel: "inIcuCumulative" },
+				{ y: 219052, indexLabel: "onVentilatorCurrently"},
+				{ y: 12586, indexLabel: "onVentilatorCumulative" },
+			]
+		}
+		]
+	});
+	chart.render();
+}
+</script>
+<script type="text/javascript" src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+</head>
+<body>
+<div id="chartContainer" style="height: 300px; width: 100%;"></div>
+</body>
+</html>

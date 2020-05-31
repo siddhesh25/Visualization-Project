@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Visualization Mini-Project</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for ('static', filename='style.css') }}">
+</head>
+<body>
+<center>
+    <h1>COVID-19 Pandemic Analysis</h1>
+    <br><br>
+    <h2>We have used sampling here to find different kinds of plots as we previously done in Lab 2.</h2>
+    <hr>
+    <br><br>
+    <h5>Due to high number of records the scatter plots generated are slow hence we have saved the csv file of fitted data for MDS correlation and MDS Euclidian and then loaded it. The CSV files have been attached.</h5>
+</center>
+<hr>
+ <div class="row" >
+     <div class="butt">
+        <BUTTON align="center"><a href="./">Home</a></BUTTON>
+        <BUTTON align="center"><a href="./pca_scree_original">Data Original</a></BUTTON>
+        <BUTTON align="center"><a href="./pca_scree_random">Data with Random Sampling</a></BUTTON>
+        <BUTTON align="center"><a href="./pca_scree_stratified">Data with Stratified Sampling</a></BUTTON>
+     </div>
+     <BUTTON align="center"><a href="http://127.0.0.1/project/index.html">Back to Dashboard</a></BUTTON>
+ </div>
+ <body style="background-color:silver;text-align:center">
+ <div id="vis">
+ </div>
+
+<div id = "error"></div>
+<script src="https://d3js.org/d3.v4.js"></script>
+<!-- <style src = "{{ url_for('static', filename='style.css')}}"></style> -->
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Visualization Mini-Project</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for ('static', filename='style.css') }}">
+</head>
+<body>
+<center>
+    <h1>COVID-19 Pandemic Analysis</h1>
+    <br><br>
+    <h2>We have used sampling here to find different kinds of plots as we previously done in Lab 2.</h2>
+    <hr>
+    <br><br>
+    <h5>Due to high number of records the scatter plots generated are slow hence we have saved the csv file of fitted data for MDS correlation and MDS Euclidian and then loaded it. The CSV files have been attached.</h5>
+</center>
+<hr>
+ <div class="row" >
+     <div class="butt">
+      <BUTTON align="center"><a href="./">Home</a></BUTTON>
+     </div>
+     <div class="buttdown">
+      <BUTTON align="center"><a href="./pca_scree_random">PCA_SCREE with random data</a></BUTTON>
+      <BUTTON align="center"><a href="./mds_corr_random">MDS Correlation with random data</a></BUTTON>
+      <BUTTON align="center"><a href="./mds_euc_random">MDS Euclidian with random data</a></BUTTON>
+      <BUTTON align="center"><a href="./scatter_random">Scatter plot for PC1 and PC2 with random data</a></BUTTON>
+      </div>
+      <BUTTON align="center"><a href="http://127.0.0.1/project/index.html">Back to Dashboard</a></BUTTON>
+ </div>
+ <div id="vis">
+ </div>
+<body style="background-color:silver;text-align:center">
+<div id = "error"></div>
+<script src="https://d3js.org/d3.v4.js"></script>
+<script>
+  function convert_arr(arr_data) {
+        arr_data = arr_data.slice(1, -1);
+        nums_arr = arr_data.split(",");
+
+        return nums_arr.map(x => +x);}
+    var mds_correlation1 = convert_arr('{{mds_correlation1}}');
+    var mds_correlation2 = convert_arr('{{mds_correlation2}}');
+
+  var data = new Array();
+
+  for (i = 0; i < mds_correlation1.length; i++) {
+     data = data.concat({'mds_correlation1':mds_correlation1[i], 'mds_correlation2':mds_correlation2[i]})
+  }
+
+  var barPadding = 5;
+
+    // set the dimensions and margins of the graph
+var margin = {top: 20, right: 20, bottom: 40, left: 60},
+    width = 600 - margin.left - margin.right,
+    height = 600 - margin.top - margin.bottom;
+
+// create svg element, respecting margins
+var svg = d3.select("#vis")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+// Add X axis
+var x = d3.scaleLinear().domain([d3.min(mds_correlation1), d3.max(mds_correlation1)]).range([0, width]);
+svg
+  .append("g")
+  .attr("class", "x axis")
+  .attr("transform", "translate(0," + height + ")")
+  .call(d3.axisBottom(x));
+
+// Add Y axis
+var y = d3.scaleLinear().domain([d3.min(mds_correlation2), d3.max(mds_correlation2)]).rangeRound([height, 0]);
+
+svg
+  .append("g")
+  .attr("class", "y axis")
+  .call(d3.axisLeft(y));
+
+// Add X axis label:
+svg.append("text")
+    .attr("text-anchor", "end")
+    .attr("x", width / 2 + margin.left)
+    .attr("y", height + margin.top + 15)
+    .text("MD Correlation1");
+
+// Y axis label:
+svg.append("text")
+    .attr("text-anchor", "end")
+    .attr("transform", "rotate(-90)")
+    .attr("x", -height / 2 + margin.top + margin.bottom)
+    .attr("y", -margin.left+20)
+    .text("MD Correlation2")
+
+svg.append('g')
+    .selectAll("dot")
+    .data(data)
+    .enter()
+    .append("circle")
+      .attr("cx", function (d) { return x(d.mds_correlation1); } )
+      .attr("cy", function (d) { return y(d.mds_correlation2); } )
+      .attr("r", 2)
+      .style("fill", "steelblue")
+</script>
+<style src = "{{ url_for('static', filename='style.css')}}"></style>
+</body>
+</html>
